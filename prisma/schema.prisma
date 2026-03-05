@@ -29,3 +29,6 @@ model Client {
   logo      String
   createdAt DateTime @default(now())
 }
+
+
+
