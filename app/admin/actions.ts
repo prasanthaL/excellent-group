@@ -1,4 +1,5 @@
 "use server";
+export const dynamic = "force-dynamic";
 
 import { prisma } from "@/lib/prisma";
 import { encrypt } from "@/lib/auth";
