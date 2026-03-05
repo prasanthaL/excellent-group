@@ -1,4 +1,6 @@
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 import {
   ArrowRight,
@@ -10,27 +12,13 @@ import {
 import BusinessCard from "@/components/BusinessCard";
 import { businesses } from "@/data/businesses";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
 export default async function Home() {
-  // Force dynamic rendering by calling cookies()
-  // This helps skip database connection attempts during static generation on Netlify
-  await cookies();
-
-  let projects: any[] = [];
-  let clients: any[] = [];
-
-  try {
-    [projects, clients] = await Promise.all([
-      prisma.project.findMany({ orderBy: { createdAt: "desc" } }),
-      prisma.client.findMany({ orderBy: { createdAt: "desc" } }),
-    ]);
-  } catch (error) {
-    console.error("Database connection failed during build/render:", error);
-    // We return empty arrays to allow the build to proceed; 
-    // it will re-attempt at runtime on Netlify.
-  }
+  const [projects, clients] = await Promise.all([
+    prisma.project.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.client.findMany({ orderBy: { createdAt: "desc" } }),
+  ]);
 
   return (
     <div className="flex flex-col w-full">
