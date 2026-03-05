@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { prisma } from "@/lib/prisma";
 import AdminShell from "@/components/admin/AdminShell";
 import { notFound } from "next/navigation";

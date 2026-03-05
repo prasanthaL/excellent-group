@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { prisma } from "@/lib/prisma";
 import AdminShell from "@/components/admin/AdminShell";
 import AddClientForm from "@/components/admin/AddClientForm";
@@ -7,8 +5,6 @@ import { ClientThumb } from "@/components/admin/Thumbnails";
 import Link from "next/link";
 import { deleteClientAction } from "@/app/admin/actions";
 import { Pencil, Trash2 } from "lucide-react";
-
-import { Project, Client } from "@prisma/client";
 
 export default async function AdminClientsPage() {
     const clients = await prisma.client.findMany({
@@ -35,7 +31,7 @@ export default async function AdminClientsPage() {
                             <p className="text-zinc-500 text-sm">No clients yet. Add one on the left →</p>
                         </div>
                     ) : (
-                        clients.map((client: Client) => (
+                        clients.map((client) => (
                             <div
                                 key={client.id}
                                 className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex items-center gap-5 hover:border-zinc-700 transition-colors"

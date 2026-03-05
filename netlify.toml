@@ -1,16 +1,12 @@
 [build]
   command = "npm run build"
+  publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "20.11.1"
+  NODE_VERSION = "20"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [functions]
-  node_bundler = "esbuild"
-  included_files = [
-    "prisma/**",
-    "node_modules/.prisma/**"
-  ]
-  external_node_modules = ["@prisma/client", "prisma"]
+  included_files = ["prisma/dev.db"]

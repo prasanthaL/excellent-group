@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { prisma } from "@/lib/prisma";
 import AdminShell from "@/components/admin/AdminShell";
 import AddProjectForm from "@/components/admin/AddProjectForm";
@@ -7,8 +5,6 @@ import { ProjectThumb } from "@/components/admin/Thumbnails";
 import Link from "next/link";
 import { deleteProjectAction } from "@/app/admin/actions";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
-
-import { Project } from "@prisma/client";
 
 export default async function AdminProjectsPage() {
     const projects = await prisma.project.findMany({
@@ -35,7 +31,7 @@ export default async function AdminProjectsPage() {
                             <p className="text-zinc-500 text-sm">No projects yet. Add one on the left →</p>
                         </div>
                     ) : (
-                        projects.map((project: Project) => (
+                        projects.map((project) => (
                             <div
                                 key={project.id}
                                 className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex items-start gap-5 hover:border-zinc-700 transition-colors"
