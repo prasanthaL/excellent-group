@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { sql } from "@/lib/db";
 import AdminShell from "@/components/admin/AdminShell";
 import AddClientForm from "@/components/admin/AddClientForm";
 import { ClientThumb } from "@/components/admin/Thumbnails";
@@ -7,9 +7,9 @@ import { deleteClientAction } from "@/app/admin/actions";
 import { Pencil, Trash2 } from "lucide-react";
 
 export default async function AdminClientsPage() {
-    const clients = await prisma.client.findMany({
-        orderBy: { createdAt: "desc" },
-    });
+    const clients = await sql`
+        SELECT * FROM "Client" ORDER BY "createdAt" DESC
+    `;
 
     return (
         <AdminShell title="Manage Clients">

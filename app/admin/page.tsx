@@ -1,11 +1,11 @@
-import { prisma } from "@/lib/prisma";
+import { sql } from "@/lib/db";
 import AdminShell from "@/components/admin/AdminShell";
 import Link from "next/link";
 import { FolderKanban, Users, Plus } from "lucide-react";
 
 export default async function AdminDashboard() {
-    const projectCount = await prisma.project.count();
-    const clientCount = await prisma.client.count();
+    const [{ count: projectCount }] = await sql`SELECT count(*) FROM "Project"`;
+    const [{ count: clientCount }] = await sql`SELECT count(*) FROM "Client"`;
 
     return (
         <AdminShell title="Dashboard">

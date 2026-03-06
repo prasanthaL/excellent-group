@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { sql } from "@/lib/db";
 import AdminShell from "@/components/admin/AdminShell";
 import { notFound } from "next/navigation";
 import { updateClientAction } from "@/app/admin/actions";
@@ -11,7 +11,7 @@ export default async function EditClientPage({
     params: Promise<{ id: string }>;
 }) {
     const { id } = await params;
-    const client = await prisma.client.findUnique({ where: { id } });
+    const [client] = await sql`SELECT * FROM "Client" WHERE id = ${id}`;
     if (!client) notFound();
 
     const update = updateClientAction.bind(null, id);

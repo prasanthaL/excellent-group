@@ -8,12 +8,12 @@ import {
 import BusinessCard from "@/components/BusinessCard";
 import { businesses } from "@/data/businesses";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { sql } from "@/lib/db";
 
 export default async function Home() {
   const [projects, clients] = await Promise.all([
-    prisma.project.findMany({ orderBy: { createdAt: "desc" } }),
-    prisma.client.findMany({ orderBy: { createdAt: "desc" } }),
+    sql`SELECT * FROM "Project" ORDER BY "createdAt" DESC`,
+    sql`SELECT * FROM "Client" ORDER BY "createdAt" DESC`,
   ]);
 
   return (

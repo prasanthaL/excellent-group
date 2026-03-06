@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { sql } from "@/lib/db";
 import AdminShell from "@/components/admin/AdminShell";
 import AddProjectForm from "@/components/admin/AddProjectForm";
 import { ProjectThumb } from "@/components/admin/Thumbnails";
@@ -7,9 +7,9 @@ import { deleteProjectAction } from "@/app/admin/actions";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 
 export default async function AdminProjectsPage() {
-    const projects = await prisma.project.findMany({
-        orderBy: { createdAt: "desc" },
-    });
+    const projects = await sql`
+        SELECT * FROM "Project" ORDER BY "createdAt" DESC
+    `;
 
     return (
         <AdminShell title="Manage Projects">
