@@ -18,6 +18,9 @@ export default function Home() {
   const [data, setData] = useState<{ projects: any[], clients: any[] }>({ projects: [], clients: [] });
 
   useEffect(() => {
+    // Scroll to top on refresh
+    window.scrollTo(0, 0);
+
     async function fetchData() {
       const resProjects = await fetch('/api/projects');
       const resClients = await fetch('/api/clients');
