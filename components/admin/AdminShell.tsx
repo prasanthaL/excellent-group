@@ -12,6 +12,7 @@ const navLinks = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/projects", label: "Projects", icon: FolderKanban },
     { href: "/admin/clients", label: "Clients", icon: Users },
+    { href: "/", label: "View Website", icon: ExternalLink, external: true },
 ];
 
 export default function AdminShell({
@@ -35,10 +36,11 @@ export default function AdminShell({
 
                 {/* Nav */}
                 <nav className="flex-1 px-3 py-4 space-y-1">
-                    {navLinks.map(({ href, label, icon: Icon }) => (
+                    {navLinks.map(({ href, label, icon: Icon, external }) => (
                         <Link
                             key={href}
                             href={href}
+                            target={external ? "_blank" : undefined}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors text-sm font-medium group"
                         >
                             <Icon size={17} className="group-hover:text-blue-400 transition-colors" />
@@ -47,33 +49,22 @@ export default function AdminShell({
                     ))}
                 </nav>
 
-                {/* Footer */}
-                <div className="px-3 py-4 border-t border-zinc-800 space-y-1">
-                    <Link
-                        href="/"
-                        target="_blank"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors text-sm"
-                    >
-                        <ExternalLink size={17} />
-                        View Website
-                    </Link>
-                    <form action={logoutAction}>
-                        <button
-                            type="submit"
-                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-red-900/20 transition-colors text-sm"
-                        >
-                            <LogOut size={17} />
-                            Logout
-                        </button>
-                    </form>
-                </div>
             </aside>
 
             {/* Main */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Header */}
-                <header className="px-8 py-5 border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                <header className="px-8 py-5 border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-sm flex items-center justify-between">
                     <h2 className="text-xl font-bold text-white">{title}</h2>
+                    <form action={logoutAction}>
+                        <button
+                            type="submit"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-red-900/20 transition-all text-xs font-bold border border-zinc-800 hover:border-red-900/50"
+                        >
+                            <LogOut size={14} />
+                            Logout
+                        </button>
+                    </form>
                 </header>
 
                 {/* Content */}
