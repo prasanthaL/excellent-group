@@ -6,6 +6,7 @@ export async function POST(request: NextRequest) {
     try {
         const formData = await request.formData();
         const file = formData.get("file") as File;
+        const folder = (formData.get("folder") as string) || "others"; // Default to others if not provided
 
         if (!file || file.size === 0) {
             return NextResponse.json({ error: "No file provided." }, { status: 400 });
@@ -25,18 +26,19 @@ export async function POST(request: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Create uploads dir if needed
-        const uploadsDir = path.join(process.cwd(), "public", "uploads");
-        await mkdir(uploadsDir, { recursive: true });
+        // Create specific folder dir
+        const targetDir = path.join(process.cwd(), "public", "uploads", folder);
+        await mkdir(targetDir, { recursive: true });
 
         // Unique filename
         const ext = file.name.split(".").pop();
         const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-        const filepath = path.join(uploadsDir, filename);
+        const filepath = path.join(targetDir, filename);
 
         await writeFile(filepath, buffer);
 
-        return NextResponse.json({ url: `/uploads/${filename}` });
+        // Return URL with folder path
+        return NextResponse.json({ url: `/uploads/${folder}/${filename}` });
     } catch (error) {
         console.error("[/api/upload]", error);
         return NextResponse.json({ error: "Upload failed." }, { status: 500 });

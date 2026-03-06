@@ -1,23 +1,21 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { updateProjectAction } from "@/app/admin/actions";
+import { updateClientAction } from "@/app/admin/actions";
 import { UploadCloud, X, ImageIcon, ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
-    project: {
+    client: {
         id: string;
         name: string;
-        description: string;
-        image: string;
-        url: string | null;
+        logo: string;
     };
 }
 
-export default function EditProjectForm({ project }: Props) {
-    const [imageUrl, setImageUrl] = useState(project.image);
-    const [previewSrc, setPreviewSrc] = useState(project.image);
+export default function EditClientForm({ client }: Props) {
+    const [logoUrl, setLogoUrl] = useState(client.logo);
+    const [previewSrc, setPreviewSrc] = useState(client.logo);
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState("");
     const [saving, setSaving] = useState(false);
@@ -36,15 +34,15 @@ export default function EditProjectForm({ project }: Props) {
         try {
             const fd = new FormData();
             fd.append("file", file);
-            fd.append("folder", "projects");
+            fd.append("folder", "clients");
             const res = await fetch("/api/upload", { method: "POST", body: fd });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error ?? "Upload failed");
-            setImageUrl(data.url);
+            setLogoUrl(data.url);
         } catch (err: any) {
             setUploadError(err.message ?? "Upload failed");
-            setPreviewSrc(project.image);
-            setImageUrl(project.image);
+            setPreviewSrc(client.logo);
+            setLogoUrl(client.logo);
             if (fileRef.current) fileRef.current.value = "";
         } finally {
             setUploading(false);
@@ -55,18 +53,18 @@ export default function EditProjectForm({ project }: Props) {
         e.preventDefault();
         setSaving(true);
         const fd = new FormData(e.currentTarget);
-        fd.set("image", imageUrl);
-        await updateProjectAction(project.id, fd);
+        fd.set("logo", logoUrl);
+        await updateClientAction(client.id, fd);
         setSaving(false);
     }
 
     return (
         <div className="max-w-xl">
             <Link
-                href="/admin/projects"
+                href="/admin/clients"
                 className="inline-flex items-center gap-2 text-zinc-400 hover:text-white text-sm mb-6 transition-colors"
             >
-                <ArrowLeft size={15} /> Back to Projects
+                <ArrowLeft size={15} /> Back to Clients
             </Link>
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
@@ -74,29 +72,29 @@ export default function EditProjectForm({ project }: Props) {
                     {/* Name */}
                     <div>
                         <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1.5">
-                            Project Name *
+                            Client Name *
                         </label>
                         <input
                             name="name"
-                            defaultValue={project.name}
+                            defaultValue={client.name}
                             required
-                            className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition"
+                            className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm transition"
                         />
                     </div>
 
-                    {/* Image Upload */}
+                    {/* Logo Upload */}
                     <div>
                         <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1.5">
-                            Project Image *
+                            Client Logo *
                         </label>
 
                         {/* Preview */}
-                        <div className="relative rounded-xl overflow-hidden aspect-video bg-zinc-800 group">
+                        <div className="relative rounded-xl overflow-hidden h-32 bg-zinc-800 group flex items-center justify-center border border-zinc-700">
                             {previewSrc ? (
                                 <img
                                     src={previewSrc}
                                     alt="preview"
-                                    className="w-full h-full object-cover"
+                                    className="max-h-full max-w-full object-contain p-4"
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-zinc-600">
@@ -107,7 +105,7 @@ export default function EditProjectForm({ project }: Props) {
                             {/* Uploading overlay */}
                             {uploading && (
                                 <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2">
-                                    <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                                    <div className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
                                     <span className="text-white text-xs">Uploading…</span>
                                 </div>
                             )}
@@ -120,29 +118,18 @@ export default function EditProjectForm({ project }: Props) {
                                 >
                                     <div className="flex flex-col items-center gap-2 text-white">
                                         <UploadCloud size={24} />
-                                        <span className="text-xs font-medium">Change Image</span>
+                                        <span className="text-xs font-medium">Change Logo</span>
                                     </div>
                                 </div>
                             )}
 
                             {/* Uploaded badge */}
-                            {!uploading && imageUrl !== project.image && (
+                            {!uploading && logoUrl !== client.logo && (
                                 <div className="absolute bottom-2 left-2 bg-green-600/90 text-white text-xs px-2 py-0.5 rounded-full">
-                                    ✓ New image uploaded
+                                    ✓ New logo uploaded
                                 </div>
                             )}
                         </div>
-
-                        {/* Change image button */}
-                        {!uploading && (
-                            <button
-                                type="button"
-                                onClick={() => fileRef.current?.click()}
-                                className="mt-2 text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1"
-                            >
-                                <ImageIcon size={12} /> Click to change image
-                            </button>
-                        )}
 
                         <input
                             ref={fileRef}
@@ -157,47 +144,18 @@ export default function EditProjectForm({ project }: Props) {
                         )}
                     </div>
 
-                    {/* Description */}
-                    <div>
-                        <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1.5">
-                            Description *
-                        </label>
-                        <textarea
-                            name="description"
-                            defaultValue={project.description}
-                            required
-                            rows={4}
-                            className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none transition"
-                        />
-                    </div>
-
-                    {/* URL */}
-                    <div>
-                        <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1.5">
-                            Project URL{" "}
-                            <span className="text-zinc-600 normal-case font-normal">(optional)</span>
-                        </label>
-                        <input
-                            name="url"
-                            type="url"
-                            defaultValue={project.url ?? ""}
-                            className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition"
-                            placeholder="https://example.com"
-                        />
-                    </div>
-
                     {/* Actions */}
                     <div className="flex gap-3 pt-2">
                         <button
                             type="submit"
                             disabled={saving || uploading}
-                            className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-900 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors text-sm"
+                            className="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 disabled:bg-purple-900 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors text-sm"
                         >
                             <Save size={16} />
                             {saving ? "Saving…" : uploading ? "Uploading…" : "Save Changes"}
                         </button>
                         <Link
-                            href="/admin/projects"
+                            href="/admin/clients"
                             className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold py-3 rounded-xl transition-colors text-sm text-center"
                         >
                             Cancel
